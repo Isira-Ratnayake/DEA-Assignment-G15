@@ -1,4 +1,8 @@
 package com.scms.administration.repository;
 
-public class UserRepository {
+import com.scms.administration.model.User;
+import org.springframework.data.repository.CrudRepository;
+
+public interface UserRepository extends CrudRepository<User, Long> {
+
 }
