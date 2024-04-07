@@ -1,5 +1,7 @@
 package com.scms.administration.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,26 +16,36 @@ import java.util.List;
 
 @Configuration
 public class SecurityConfiguration {
+    @Value("${scms.cors.origin}")
+    private String origin;
+    private final EntryUserAuthenticationProvider entryUserAuthenticationProvider;
+    private final EntryUserDetailsService entryUserDetailsService;
+
+    @Autowired
+    public SecurityConfiguration(EntryUserAuthenticationProvider entryUserAuthenticationProvider, EntryUserDetailsService entryUserDetailsService) {
+        this.entryUserAuthenticationProvider = entryUserAuthenticationProvider;
+        this.entryUserDetailsService = entryUserDetailsService;
+    }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http.cors(cors -> {
-//            CorsConfigurationSource source = request -> {
-//                CorsConfiguration config = new CorsConfiguration();
-//                config.setAllowedOrigins(
-//                        List.of(origin));
-//                config.setAllowedHeaders(
-//                        List.of("Authorization"));
-//                config.setAllowedMethods(
-//                        List.of("GET", "POST"));
-//                return config;
-//            };
-//            cors.configurationSource(source);
-//        });
+        http.cors(cors -> {
+            CorsConfigurationSource source = request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowedOrigins(
+                        List.of(origin));
+                config.setAllowedHeaders(
+                        List.of("Authorization"));
+                config.setAllowedMethods(
+                        List.of("GET", "POST"));
+                return config;
+            };
+            cors.configurationSource(source);
+        });
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//        http.addFilterAt(new EntryLocationFilter(entryLocationAuthenticationProvider), BasicAuthenticationFilter.class)
-//                .addFilterAfter(new EntryUserFilter(entryUserAuthenticationProvider), BasicAuthenticationFilter.class)
-//                .addFilterAfter(new JwtAuthenticationFilter(entryUserDetailsService), BasicAuthenticationFilter.class);
+        http.addFilterAt(new EntryUserFilter(entryUserAuthenticationProvider), BasicAuthenticationFilter.class)
+            .addFilterAfter(new JwtAuthenticationFilter(entryUserDetailsService), BasicAuthenticationFilter.class);
         http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll());
         return http.build();
     }
