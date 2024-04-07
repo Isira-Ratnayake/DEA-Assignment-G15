@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mariadb://localhost:3306/scmsdb
     username: root
-    password: 123
+    password: codename47SUNBRO@239485672
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
