@@ -77,7 +77,7 @@ public class EntryUserFilter extends OncePerRequestFilter {
         catch(Exception e) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            Error error = new Error("unknown", "unknown");
+            Error error = new Error("unknown", e.getMessage());
             ObjectMapper objectMapper = new ObjectMapper();
             String errorResponseString = objectMapper.writeValueAsString(error);
             response.getWriter().write(errorResponseString);
