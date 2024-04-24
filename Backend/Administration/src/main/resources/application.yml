@@ -13,4 +13,7 @@ spring:
 
 scms:
   cors:
-    origin: ""
+    origin: "http://localhost:5173/"
+
+server:
+  port: 8080
