@@ -1,4 +1,4 @@
-package com.scms.customers.security;
+package com.scms.invoices.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                 config.setAllowedOrigins(
                         List.of(origin));
                 config.setAllowedHeaders(
-                        List.of("Authorization"));
+                        List.of("Authorization", "Content-Type"));
                 config.setAllowedMethods(
                         List.of("GET", "POST", "PUT", "DELETE"));
                 return config;

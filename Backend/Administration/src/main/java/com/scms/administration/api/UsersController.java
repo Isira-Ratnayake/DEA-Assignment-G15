@@ -1,5 +1,6 @@
 package com.scms.administration.api;
 
+import com.scms.administration.dto.DataReferenceElement;
 import com.scms.administration.dto.FormSubmitResponse;
 import com.scms.administration.dto.ListUsersResponse;
 import com.scms.administration.service.UsersService;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -25,6 +28,13 @@ public class UsersController {
         ListUsersResponse listUsersResponse = usersService.listUsers();
         return new ResponseEntity<>(listUsersResponse, HttpStatus.OK);
     }
+
+    @GetMapping("listusersfordatareference")
+    public ResponseEntity<List<DataReferenceElement>> listUsersForDataReferenceHandler() {
+        List<DataReferenceElement> users = usersService.listUsersForDataReference();
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
     @PostMapping("adduser")
     public ResponseEntity<FormSubmitResponse> addUserHandler(
             @RequestParam("username") @NotBlank String username,

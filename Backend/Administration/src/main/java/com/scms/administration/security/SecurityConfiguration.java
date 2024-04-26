@@ -18,6 +18,18 @@ import java.util.List;
 public class SecurityConfiguration {
     @Value("${scms.cors.origin}")
     private String origin;
+
+    @Value("${scms.cors.customers}")
+    private String customers;
+
+    @Value("${scms.cors.suppliers}")
+    private String suppliers;
+
+    @Value("${scms.cors.products}")
+    private String products;
+
+    @Value("${scms.cors.invoices}")
+    private String invoices;
     private final EntryUserAuthenticationProvider entryUserAuthenticationProvider;
     private final EntryUserDetailsService entryUserDetailsService;
 
@@ -33,7 +45,7 @@ public class SecurityConfiguration {
             CorsConfigurationSource source = request -> {
                 CorsConfiguration config = new CorsConfiguration();
                 config.setAllowedOrigins(
-                        List.of(origin));
+                        List.of(origin, customers, suppliers, products, invoices));
                 config.setAllowedHeaders(
                         List.of("Authorization"));
                 config.setAllowedMethods(

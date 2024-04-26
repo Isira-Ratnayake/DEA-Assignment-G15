@@ -1,4 +1,4 @@
-package com.scms.customers.security;
+package com.scms.invoices.security;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

@@ -45,6 +45,19 @@ public class UsersService {
         }
     }
 
+    public List<DataReferenceElement> listUsersForDataReference() {
+        try {
+            List<DataReferenceElement> users = new ArrayList<>();
+            for(User user : userRepository.findAll()) {
+                users.add(new DataReferenceElement(user.getUserId(), user.getUsername()));
+            }
+            return users;
+        }
+        catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
     public FormSubmitResponse addUser(String username, String password, Long roleId) {
         try {
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

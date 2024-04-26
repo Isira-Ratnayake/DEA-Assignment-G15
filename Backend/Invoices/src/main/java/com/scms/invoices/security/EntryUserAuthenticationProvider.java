@@ -1,6 +1,6 @@
-package com.scms.customers.security;
+package com.scms.invoices.security;
 
-import com.scms.customers.dto.UserDto;
+import com.scms.invoices.dto.UserDto;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
