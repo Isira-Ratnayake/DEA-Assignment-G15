@@ -362,7 +362,7 @@ export default function CustomerInvoices() {
         title="Delete Customer Invoice"
         modalId="deleteModal"
         formId="deleteForm"
-        buttonText="Delete CustomerInvoice"
+        buttonText="Delete Customer Invoice"
         modalType="delete"
         formContent={
           <>

@@ -9,34 +9,41 @@ import {
 } from "../api/CustomerInvoicesApi";
 import { getUserList } from "../api/UserApi";
 import { searchCustomers } from "../api/CustomersApi";
-import { getProductlist } from "../api/ProductsApi";
+import { getProductlist, searchProducts } from "../api/ProductsApi";
 import { roundToTwoDecimals, stringifyProducts } from "../utils/StringUtils";
 import { useEffect, useState } from "react";
+import {
+  addSupplierInvoice,
+  deleteSupplierInvoice,
+  searchSupplierInvoices,
+} from "../api/SupplierInvoicesApi";
+import { searchSuppliers } from "../api/SuppliersApi";
 
 export async function loader() {
   const { loggedIn } = await requireAuth();
   if (!loggedIn) {
     throw redirect("login");
   }
-  const invoices = await searchCustomerInvoices();
+  const invoices = await searchSupplierInvoices();
   const users = await getUserList();
-  const customers = await searchCustomers();
+  const { suppliers } = await searchSuppliers();
   const products = await getProductlist();
+  const productDetails = await searchProducts();
 
-  return { invoices, users, customers, products };
+  return { invoices, users, suppliers, products, productDetails };
 }
 
 export async function action({ request }) {
   const formData = await request.formData();
   const formType = formData.get("formType");
   if (formType === "add") {
-    const customerInvoice = formData.get("customerInvoice");
-    let response = await addCustomerInvoice(customerInvoice);
+    const supplierInvoice = formData.get("supplierInvoice");
+    let response = await addSupplierInvoice(supplierInvoice);
     if (response !== null) {
       response = {
         message: {
           success: true,
-          message: "Customer Invoice successfully added.",
+          message: "Supplier Invoice successfully added.",
         },
         formType: formType,
       };
@@ -44,13 +51,13 @@ export async function action({ request }) {
     }
     return null;
   } else if (formType === "delete") {
-    const customerInvoiceId = formData.get("customerInvoiceId");
-    let response = await deleteCustomerInvoice(customerInvoiceId);
+    const supplierInvoiceId = formData.get("supplierInvoiceId");
+    let response = await deleteSupplierInvoice(supplierInvoiceId);
     if (response !== null) {
       response = {
         message: {
           success: true,
-          message: "Customer successfully deleted.",
+          message: "Supplier successfully deleted.",
         },
         formType: formType,
       };
@@ -62,11 +69,12 @@ export async function action({ request }) {
 }
 
 export default function SupplierInvoices() {
-  const { invoices, users, customers, products } = useLoaderData();
+  const { invoices, users, suppliers, products, productDetails } =
+    useLoaderData();
   const [modal, setModal] = useState({
-    customerInvoiceId: "",
+    supplierInvoiceId: "",
     invoiceDate: "",
-    customerId: "",
+    supplierId: "",
     userId: "",
     invoiceProducts: [],
   });
@@ -94,14 +102,14 @@ export default function SupplierInvoices() {
   }, [response]);
   const dataGrid = invoices?.map((invoice) => {
     return (
-      <tr key={invoice.customerInvoiceId}>
-        <td>{invoice.customerInvoiceId}</td>
+      <tr key={invoice.supplierInvoiceId}>
+        <td>{invoice.supplierInvoiceId}</td>
         <td>{invoice.invoiceDate}</td>
         <td>
           {
-            customers.filter(
-              (customer) => customer.customerId === invoice.customerId
-            )[0].customerName
+            suppliers.filter(
+              (supplier) => supplier.supplierId === invoice.supplierId
+            )[0].supplierName
           }
         </td>
         <td>{stringifyProducts(invoice.invoiceProducts, products)}</td>
@@ -115,7 +123,7 @@ export default function SupplierInvoices() {
             data-bs-toggle="modal"
             data-bs-target="#deleteModal"
             onClick={() => {
-              loadModalData(invoice.customerInvoiceId);
+              loadModalData(invoice.supplierInvoiceId);
             }}
           >
             Delete
@@ -128,33 +136,33 @@ export default function SupplierInvoices() {
   function clearModalData() {
     setModal(() => {
       return {
-        customerInvoiceId: "",
+        supplierInvoiceId: "",
         invoiceDate: "",
-        customerId: "",
+        supplierId: "",
         userId: "",
         invoiceProducts: [],
       };
     });
   }
-  function loadModalData(customerInvoiceId) {
+  function loadModalData(supplierInvoiceId) {
     const invoice = invoices.filter(
-      (invoice) => invoice.customerInvoiceId === customerInvoiceId
+      (invoice) => invoice.supplierInvoiceId === supplierInvoiceId
     )[0];
     setModal(() => {
       return {
-        customerInvoiceId: invoice.customerInvoiceId,
+        supplierInvoiceId: invoice.supplierInvoiceId,
         invoiceDate: invoice.invoiceDate,
-        customerId: invoice.customerId,
+        supplierId: invoice.supplierId,
         userId: invoice.userId,
         invoiceProducts: invoice.invoiceProducts,
       };
     });
   }
 
-  const customerOptions = customers.map((customer) => {
+  const supplierOptions = suppliers.map((supplier) => {
     return (
-      <option key={customer.customerId} value={customer.customerId}>
-        {customer.customerName}
+      <option key={supplier.supplierId} value={supplier.supplierId}>
+        {supplier.supplierName}
       </option>
     );
   });
@@ -167,6 +175,12 @@ export default function SupplierInvoices() {
         ).length === 0
     )
     .map((product) => {
+      const productDetail = productDetails.filter(
+        (productDetail) => productDetail.productId == product.id
+      )[0];
+      if (productDetail.supplierId != modal.supplierId) {
+        return null;
+      }
       return (
         <option key={product.id} value={product.id}>
           {product.description}
@@ -228,7 +242,7 @@ export default function SupplierInvoices() {
     <>
       <Navbar selected="supplierInvoices" />
       <div className="content">
-        <h1 className="content-heading">Customer Invoices</h1>
+        <h1 className="content-heading">Supplier Invoices</h1>
         <div className="row mb-3">
           <div className="col text-end">
             <button
@@ -240,7 +254,7 @@ export default function SupplierInvoices() {
                 clearModalData();
               }}
             >
-              Add Cutomer Invoice
+              Add Supplier Invoice
             </button>
           </div>
         </div>
@@ -249,7 +263,7 @@ export default function SupplierInvoices() {
             <tr>
               <th scope="col">Invoice ID</th>
               <th scope="col">Invoice Date</th>
-              <th scope="col">Customer</th>
+              <th scope="col">Supplier</th>
               <th scope="col">Products</th>
               <th scope="col">User</th>
               <th scope="col" className="text-end">
@@ -261,27 +275,27 @@ export default function SupplierInvoices() {
         </table>
       </div>
       <FormModal
-        title="Add Customer Invoice"
+        title="Add Supplier Invoice"
         modalId="addModal"
         formId="addForm"
-        buttonText="Add Customer Invoice"
+        buttonText="Add Supplier Invoice"
         modalType="add"
         formContent={
           <>
             <div className="mb-4">
               <label htmlFor="customerId" className="form-label">
-                Customer
+                Supplier
               </label>
               <select
                 className="form-select"
                 id="customerId"
                 name="customerId"
-                value={modal.customerId}
+                value={modal.supplierId}
                 onChange={(event) => {
                   setModal((prev) => {
                     return {
                       ...prev,
-                      customerId: event.target.value,
+                      supplierId: event.target.value,
                     };
                   });
                 }}
@@ -289,7 +303,7 @@ export default function SupplierInvoices() {
                 <option value="" disabled>
                   &nbsp;
                 </option>
-                {customerOptions}
+                {supplierOptions}
               </select>
             </div>
             <div className="mb-3 text-end">
@@ -351,7 +365,7 @@ export default function SupplierInvoices() {
             <input type="hidden" name="formType" value="add" readOnly={true} />
             <input
               type="hidden"
-              name="customerInvoice"
+              name="supplierInvoice"
               value={JSON.stringify(modal)}
               readOnly={true}
             />
@@ -359,10 +373,10 @@ export default function SupplierInvoices() {
         }
       />
       <FormModal
-        title="Delete Customer Invoice"
+        title="Delete Supplier Invoice"
         modalId="deleteModal"
         formId="deleteForm"
-        buttonText="Delete CustomerInvoice"
+        buttonText="Delete Supplier Invoice"
         modalType="delete"
         formContent={
           <>
@@ -370,19 +384,19 @@ export default function SupplierInvoices() {
               <tbody>
                 <tr>
                   <th scope="row">Invoice ID</th>
-                  <td>{modal.customerInvoiceId}</td>
+                  <td>{modal.supplierInvoiceId}</td>
                 </tr>
                 <tr>
                   <th scope="row">Invoice Date</th>
                   <td>{modal.invoiceDate}</td>
                 </tr>
                 <tr>
-                  <th scope="row">Customer</th>
+                  <th scope="row">Supplier</th>
                   <td>
                     {
-                      customers.filter(
-                        (customer) => customer.customerId === modal.customerId
-                      )[0]?.customerName
+                      suppliers.filter(
+                        (supplier) => supplier.supplierId === modal.supplierId
+                      )[0]?.supplierName
                     }
                   </td>
                 </tr>
@@ -412,8 +426,8 @@ export default function SupplierInvoices() {
             </table>
             <input
               type="hidden"
-              name="customerInvoiceId"
-              value={modal.customerInvoiceId}
+              name="supplierInvoiceId"
+              value={modal.supplierInvoiceId}
               readOnly={true}
             />
             <input
