@@ -35,7 +35,8 @@ public class AuthenticationController {
         String decodedKey = new String(Decoders.BASE64.decode(SecurityConstants.API_KEY));
         if(decodedKey.equals(key)) {
             EntryUserDetails currentUser = (EntryUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return new ResponseEntity<>(new UserDto(currentUser.getUser().getUserId(), currentUser.getUsername(), currentUser.getUser().getRole().getRoleId()), HttpStatus.OK);
+            return new ResponseEntity<>(new UserDto(currentUser.getUser().getUserId(), currentUser.getUsername(),
+                    currentUser.getUser().getRole().getRoleId()), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }

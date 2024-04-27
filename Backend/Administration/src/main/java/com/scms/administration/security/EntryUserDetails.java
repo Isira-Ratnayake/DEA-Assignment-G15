@@ -21,7 +21,7 @@ public class EntryUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
-        grantedAuthorities.add(new SimpleGrantedAuthority(user.getRole().getRoleDescription()));
+        grantedAuthorities.add(new SimpleGrantedAuthority(String.valueOf(user.getRole().getRoleId())));
         return grantedAuthorities;
     }
 

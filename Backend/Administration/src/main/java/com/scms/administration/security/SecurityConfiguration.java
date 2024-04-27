@@ -49,7 +49,7 @@ public class SecurityConfiguration {
                 config.setAllowedHeaders(
                         List.of("Authorization"));
                 config.setAllowedMethods(
-                        List.of("GET", "POST"));
+                        List.of("GET", "POST", "DELETE", "PUT"));
                 return config;
             };
             cors.configurationSource(source);
@@ -58,7 +58,20 @@ public class SecurityConfiguration {
         http.sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.addFilterAt(new EntryUserFilter(entryUserAuthenticationProvider), BasicAuthenticationFilter.class)
             .addFilterAfter(new JwtAuthenticationFilter(entryUserDetailsService), BasicAuthenticationFilter.class);
-        http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll());
+        http.authorizeHttpRequests((auth) ->
+                auth.requestMatchers("/users/adduser/**").hasAuthority("1")
+                        .requestMatchers("/users/edituser/**").hasAuthority("1")
+                        .requestMatchers("/users/deleteuser/**").hasAuthority("1")
+                        .requestMatchers("/users/adduser/**").hasAuthority("2")
+                        .requestMatchers("/users/edituser/**").hasAuthority("2")
+                        .requestMatchers("/users/adduser/**").hasAuthority("3")
+                        .requestMatchers("/users/listusers/**").authenticated()
+                        .requestMatchers("/authentication/requireauth/**").permitAll()
+                        .requestMatchers("/authentication/authenticate/**").permitAll()
+                        .requestMatchers("/authentication/login/**").permitAll()
+                        .anyRequest().denyAll()
+
+        );
         return http.build();
     }
 }
