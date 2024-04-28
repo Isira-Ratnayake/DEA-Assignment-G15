@@ -42,7 +42,7 @@ public class ProductController {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
-    @PostMapping("editproduct")
+    @PutMapping("editproduct")
     public ResponseEntity<Product> editProductHandler(@RequestBody Product product) {
         Product insertedProduct = productService.editProduct(product);
         if(insertedProduct != null) {
@@ -51,7 +51,7 @@ public class ProductController {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
-    @PostMapping("deleteproduct")
+    @DeleteMapping("deleteproduct")
     public ResponseEntity<Product> deleteProductHandler(@RequestBody Product product) {
         boolean success = productService.deleteProduct(product);
         if(success) {

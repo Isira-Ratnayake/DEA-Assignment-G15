@@ -66,6 +66,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/users/edituser/**").hasAuthority("2")
                         .requestMatchers("/users/adduser/**").hasAuthority("3")
                         .requestMatchers("/users/listusers/**").authenticated()
+                        .requestMatchers("/users/listusersfordatareference/**").authenticated()
                         .requestMatchers("/authentication/requireauth/**").permitAll()
                         .requestMatchers("/authentication/authenticate/**").permitAll()
                         .requestMatchers("/authentication/login/**").permitAll()

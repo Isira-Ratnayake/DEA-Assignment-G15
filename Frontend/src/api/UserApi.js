@@ -53,7 +53,7 @@ export async function editUser(username, role, userId) {
   formData.append("roleId", role);
   formData.append("userId", userId);
   const response = await fetch(`${API_URI}/users/edituser`, {
-    method: "POST",
+    method: "PUT",
     headers: headers,
     body: formData,
   });
@@ -70,7 +70,7 @@ export async function deleteUser(userId) {
   const formData = new FormData();
   formData.append("userId", userId);
   const response = await fetch(`${API_URI}/users/deleteuser`, {
-    method: "POST",
+    method: "DELETE",
     headers: headers,
     body: formData,
   });

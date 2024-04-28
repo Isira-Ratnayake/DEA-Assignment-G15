@@ -45,7 +45,7 @@ public class UsersController {
         return new ResponseEntity<>(formSubmitResponse, HttpStatus.OK);
     }
 
-    @PostMapping("deleteuser")
+    @DeleteMapping("deleteuser")
     public ResponseEntity<FormSubmitResponse> deleteUserHandler(
             @RequestParam("userId") @NotBlank String userId
     ) {
@@ -53,7 +53,7 @@ public class UsersController {
         return new ResponseEntity<>(formSubmitResponse, HttpStatus.OK);
     }
 
-    @PostMapping("edituser")
+    @PutMapping("edituser")
     public ResponseEntity<FormSubmitResponse> editUserHandler(
             @RequestParam("username") @NotBlank String username,
             @RequestParam("roleId") @NotBlank String roleId,

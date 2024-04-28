@@ -63,7 +63,7 @@ export async function editProduct(
   headers.append("Authorization", `Bearer ${sessionStorage.getItem("token")}`);
   headers.append("Content-Type", "application/json");
   const response = await fetch(`${API_URI}/products/editproduct`, {
-    method: "POST",
+    method: "PUT",
     headers: headers,
     body: JSON.stringify({
       productId: Number(productId),
@@ -85,7 +85,7 @@ export async function deleteProduct(productId) {
   headers.append("Authorization", `Bearer ${sessionStorage.getItem("token")}`);
   headers.append("Content-Type", "application/json");
   const response = await fetch(`${API_URI}/products/deleteproduct`, {
-    method: "POST",
+    method: "DELETE",
     headers: headers,
     body: JSON.stringify({
       productId: Number(productId),

@@ -66,7 +66,7 @@ export async function editSupplier(
   formData.append("supplierAddress", supplierAddress);
   formData.append("supplierId", supplierId);
   const response = await fetch(`${API_URI}/suppliers/editsupplier`, {
-    method: "POST",
+    method: "PUT",
     headers: headers,
     body: formData,
   });
@@ -83,7 +83,7 @@ export async function deleteSupplier(supplierId) {
   const formData = new FormData();
   formData.append("supplierId", supplierId);
   const response = await fetch(`${API_URI}/suppliers/deletesupplier`, {
-    method: "POST",
+    method: "DELETE",
     headers: headers,
     body: formData,
   });

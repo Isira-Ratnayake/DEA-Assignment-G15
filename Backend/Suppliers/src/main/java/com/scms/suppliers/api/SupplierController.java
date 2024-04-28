@@ -33,14 +33,14 @@ public class SupplierController {
         return new ResponseEntity<>(formSubmitResponse, HttpStatus.OK);
     }
 
-    @PostMapping("editsupplier")
+    @PutMapping("editsupplier")
     public ResponseEntity<FormSubmitResponse> editSupplierHandler(@RequestParam("supplierId") @NotBlank  String supplierId, @RequestParam("supplierName") @NotBlank String supplierName, @RequestParam("supplierMobile") @NotBlank String supplierMobile, @RequestParam("supplierAddress") @NotBlank String supplierAddress)
     {
         FormSubmitResponse formSubmitResponse = suppliersService.editSupplier(Long.parseLong(supplierId),supplierName,supplierMobile,supplierAddress,(Long)SecurityContextHolder.getContext().getAuthentication().getCredentials());
         return new ResponseEntity<>(formSubmitResponse,HttpStatus.OK);
     }
 
-    @PostMapping("deletesupplier")
+    @DeleteMapping("deletesupplier")
     public ResponseEntity<FormSubmitResponse> deleteSupplierHandler(@RequestParam("supplierId") @NotBlank String supplierId){
         FormSubmitResponse formSubmitResponse = suppliersService.deleteSupplier(supplierId);
         return new ResponseEntity<>(formSubmitResponse, HttpStatus.OK);
